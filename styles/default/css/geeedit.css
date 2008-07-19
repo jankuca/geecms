@@ -1,0 +1,10 @@
+body
+{
+	border: 0 !important;
+	padding: 10px;
+	text-align: left;
+}
+body *
+{
+	border: 1px dashed #ABF;
+}

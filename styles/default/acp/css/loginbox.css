@@ -1,0 +1,94 @@
+body
+{
+	background: #222;
+	font-size: 13px;
+	font-family: Arial,sans-serif;
+	text-align: center;
+}
+div#loginbox
+{
+	background: #FFF;
+	width: 400px;
+	margin: 100px auto 0;
+	border: 8px solid #DDD;
+	text-align: left;
+}
+div#cookies
+{
+	background: url('../images/cookies.png') no-repeat left top;
+	width: 310px;
+	margin: 10px auto 0;
+	padding: 2px 20px 20px 70px;
+	color: #DDD;
+	text-align: left;
+}
+div#security
+{
+	background: #FFF url('../images/lock.png') no-repeat left 15px;
+	width: 240px;
+	margin: 100px auto 0;
+	padding: 20px 20px 20px 140px;
+	border: 8px solid #F55;
+	text-align: left;
+}
+div.alert
+{
+	background: #FFF;
+	width: 360px;
+	margin: 100px auto 0;
+	padding: 20px;
+	border: 8px solid #DDD;
+	text-align: left;
+}
+div#error
+{
+	background: #FFF url('../../../../images.php?image=error_alert') no-repeat 20px 15px;
+	width: 270px;
+	padding-left: 110px;
+	border-color: #F55;
+}
+div#success
+{
+	width: 330px;
+	padding-left: 50px;
+	border-color: #BC0;
+}
+h1
+{
+	margin: 10px 20px 15px;
+	padding: 0;
+	border-bottom: 1px solid #8AC;/*CCC;*/
+	font-size: 100%;
+}
+p
+{
+	margin: 0 0 20px;
+	padding: 0;
+}
+ul
+{
+	margin: 10px 0;
+	padding: 0;
+	list-style-position: inside;
+}
+
+label
+{
+	display: inline;
+	float: left;
+	width: 120px;
+	margin-left: 20px;
+	padding: 2px 10px 0;
+	text-align: right;
+}
+input.text
+{
+	width: 200px;
+	margin-bottom: 3px;
+}
+input.submit
+{
+	float: right;
+	margin: 0 173px 10px 0;
+}
+.clear { clear: both; }
