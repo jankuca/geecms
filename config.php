@@ -13,7 +13,7 @@ include_once('./app/subsystems/lang.php');
 include_once('./app/subsystems/modules.php');
 
 // mysql: connection
-$q->connect('localhost','blackpig','vGVbTen9y*:Ue7PW','blackpig');
+$q->connect('localhost','root','','blackpig');
 $q->prefix = 'geecms_';
 
 // mysql: select the configuration
@@ -39,11 +39,8 @@ define('SITE_ROOT_PATH',$cfg['etc']['SITE_ROOT_PATH']);
 include_once('./app/lib/pages.class.php');
 include_once('./app/lib/js/fckeditor/fckeditor.php');
 
-/*$p = new Pages();
-$p->query = "SELECT `uid`,`username` FROM " . $q->table('users') . " ORDER BY `uid` ASC";
-$p->make();*/
-
-// modules: load
+// load all
+$tpl->load_config();
 $lang->load();
 $mod->load();
 ?>

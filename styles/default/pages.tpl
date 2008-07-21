@@ -5,11 +5,12 @@
 		</div></if(ERROR)>
 <if(PAGE)>		<h2>{PAGE.HEADER}</h2>
 {PAGE.CONTENT}</if(PAGE)>
-<if(PAGE_CHILDS)>		<div class="page-childs">
-			<h2>{L_PAGES_CHILDS}</h2>
-			<ul>
-<foreach(PAGE_CHILDS)>				<li><a href="<var(CHILD_LINK)>"><var(CHILD_HEADER)></a></li>
-</foreach(PAGE_CHILDS)>			</ul>
-		</div>
-</if(PAGE_CHILDS)>
 	</div>
+
+<if(PAGE_CHILDS)>	<div class="page-childs">
+		<h2>{L_PAGES_CHILDS}</h2>
+		<ul>
+<foreach(PAGE_CHILDS)>			<li><a href="<var(CHILD_LINK)>"><var(CHILD_HEADER)></a></li>
+</foreach(PAGE_CHILDS)>		</ul>
+	</div>
+</if(PAGE_CHILDS)>

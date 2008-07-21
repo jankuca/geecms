@@ -3,7 +3,7 @@ body
 	margin: 0; padding: 0;
 	background: #FFF;
 	color: #333;
-	font-family: Arial,'Lucida Grande','Lucida Sans',Arial,Calibri,sans-serif;
+	font-family: Arial,'Lucida Grande','Lucida Sans',Calibri,sans-serif;
 	font-size: 13px;
 	text-align: center;
 	background: #FFF url('../images/body-bg.png') repeat-x center top;
@@ -23,7 +23,7 @@ h1
 	letter-spacing: -0.06em;
 	text-align: left;
 }
-	h1 a { padding: 2px 0; color: #FFF; text-decoration: none; }
+	h1 a { padding: 2px 0; color: #FFF !important; text-decoration: none; }
 
 h2
 {
@@ -46,11 +46,14 @@ div#column h3
 {
 	margin-top: 5px;
 	margin-bottom: 0;
-	color: #EEE;
+	color: #690;
+	font-size: 1.1em;
 }
 h4
 {
 	clear: both;
+	margin: 5px 0;
+	color: #333;
 }
 
 
@@ -64,14 +67,29 @@ ul
 }
 li
 {
-	margin-left: 20px;
+	margin: 0 0 0 20px;
 }
 
+
+div#infobar
+{
+	position: fixed;
+	top: 0; left: 0;
+	width: 100%;
+	display: block;
+	padding: 5px 35px;
+	border-top: 1px solid #FFF;
+	border-bottom: 1px solid #FD0;
+	background: #FFA;
+	font-size: 11px;
+	text-align: left;
+}
 
 div#header
 {
 	height: 69px;
 	padding: 30px 0 0 0;
+	/*background: #444;*/
 	color: #FFF;
 	text-align: center;
 }
@@ -90,6 +108,8 @@ div#logininfo
 		margin: 0 auto;
 		text-align: right;
 	}
+
+/*div#breadcrumbs { background: #EEE; }*/
 
 div.wrapper
 {
@@ -115,7 +135,7 @@ div#header div.wrapper
 		padding: 0 10px 0 32px;
 		background: url('../images/home.png') no-repeat 10px center;
 		font-size: 11px;
-		font-family: Tahoma, Arial, Verdana, sans-serif;
+		font-family: Arial, Tahoma, Verdana, sans-serif;
 	}
 	div#breadcrumbs a
 	{
@@ -138,12 +158,12 @@ div#column
 	display: inline;
 	width: 211px;
 }
-	div#column h3 { margin: 0 1px 0 10px; }
+	div#column h3 { margin: 0 1px 0 10px; color: #570; }
 	div#column ul { margin: 5px 0 20px; padding: 0;}
 	div#column li
 	{
 		margin: 0;
-		padding: 0 0;
+		padding: 0;
 		list-style: none;
 	}
 		div#column li a
@@ -191,7 +211,10 @@ table{ width: 100%; text-align:left; color: #222; font-size: 100%; line-height: 
 table.config { float: right; width: 475px; }
 .col1 { width: 175px; }
 .col2 { width: 300px; }
+.col3 { width: 350px; }
 .action { width: 70px; }
+.actionhalf { width: 40px; }
+td.error, tr:hover td.error, tr.error td, tr.error:hover td, option.error { border: 1px solid #FAA; background: #FDD; color: #F00; padding: 5px 10px; }
 table h4 { margin: 0; }
 td { padding: 2px 1px 1px; }
 th
@@ -238,8 +261,10 @@ label
 	padding: 0 10px 0 0;
 	text-align: right;
 }
-label.none { float: none; display: inline; }
+input.none, label.none { clear: none !important; margin: auto !important; padding: auto !important; float: none !important; display: inline !important; }
 fieldset { margin: 0 0 10px; border: 1px solid #DDD; }
+input[type=text], textarea { width: 400px; }
+textarea,input { font-family: Arial; }
 input[type=submit]
 {
 	clear: both;
@@ -252,6 +277,7 @@ input[type=submit]
 	color: #FFF;
 }
 .half { width: 60%; }
+.terc { width: 256px !important; }
 .clear { clear: both; }
 img.img
 {
@@ -260,6 +286,31 @@ img.img
 	margin: 0 20px 10px 10px;
 }
 
+form { margin: 0; padding: 0; }
+
+div.pages
+{
+	margin: 30px 100px 0;
+	font-size: 11px;
+	text-align: center;
+}
+	div.pages strong,div.pages a,div.pages small
+	{
+		padding: 0 4px;
+		border: 1px solid #E0E0E0;
+		font-size: 11px;
+		text-decoration: none;
+	}
+	div.pages strong { background-color: #EFF; border-color: #ACF; }
+	div.pages small { color: #CCC; }
+	div.pages a:hover { border-color: #BBB; }
+
+span.tag
+{
+	display:block;
+	padding: 2px 0;
+	background: url('../../../../images.php?image=delete') no-repeat right center;
+}
 
 iframe#geeedit
 {

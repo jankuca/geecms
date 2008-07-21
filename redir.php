@@ -11,6 +11,7 @@ if(isset($_GET['request']) && $_GET['request'] != '')
 	}
 	else
 	{
+		//_error_404();
 		header('Location: ' . SITE_ROOT_PATH);
 	}
 }

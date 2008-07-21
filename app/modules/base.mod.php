@@ -23,6 +23,16 @@ class module_base
 			$tpl->inc(\'footer\');';
 		}
 	}
+	
+	public function _module_config()
+	{
+		global $tpl;
+		$sql = new MySQLObject();
+		$tpl->_module_config("
+SELECT `name`,`value`,`type`
+FROM " . $sql->table('config') . "
+WHERE (`module` = 'base')");
+	}
 }
 
 global $mod;
@@ -109,6 +119,8 @@ if(defined('IN_ACP') && IN_ACP)
 					'LINK' => './acp.php?c=config&amp;module=base',
 					'HEADER' => '{L_MODULE_BASE_CONFIG}'
 				);
+				
+				$mod->modules['base']->_module_config();
 				
 				$tpl->inc('config_base',1);
 				

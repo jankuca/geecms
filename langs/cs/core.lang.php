@@ -9,10 +9,30 @@ $tpl->assign(array(
 	'L_YES' => 'Ano',
 	
 	'L_BACK' => 'Zpět na předchozí stránku',
+	
+	'L_NEXT' => 'Další &raquo;',
+	'L_PREV' => '&laquo; Předchozí',
 
 	'L_CONFIG' => 'Nastavení',
+	'L_CONFIG_SUBMIT' => 'Změnit nastavení',
+	
 	'L_HEADER' => 'Nadpis',
+	'L_SLUG' => 'Slug',
+	'L_SLUG_GENERATE' => 'Vygenerovat automaticky <em>(doporučeno!)</em>',
+	'L_SLUG_GENERATE_NOREC' => 'Vygenerovat automaticky z nadpisu',
+	'L_SLUG_KEEP_ORIGINAL' => 'Ponechat původní <em>(doporučeno!)</em>',
+	'L_SLUG_INPUT' => 'Zadat vlastní',
+	'L_DATE' => 'Datum',
 	'L_VALUE' => 'Hodnota',
+	'L_TEXT' => 'Text',
+	'L_LINK' => 'Odkaz',
+	'L_MOVE' => 'Posun',
+	
+	'L_UP' => 'Nahoru',
+	'L_DOWN' => 'Dolu',
+	
+	'L_SEARCHED_TERM' => 'Hledaný termín',
+	
 	'L_MODULE_LINK' => 'Strana modulu',
 	'L_OVERVIEW' => 'Přehled',
 
@@ -21,6 +41,9 @@ $tpl->assign(array(
 
 	'L_EDIT' => 'Upravit',
 	'L_DELETE' => 'Smazat',
+	'L_SHOW' => 'Zobrazit',
+	'L_HIDE' => 'Skrýt',
+	'L_SHOWING' => 'Zobrazení',
 	
 	// PERMISSIONS
 	'L_PERMISSIONS_VALUE.read' => 'Číst',

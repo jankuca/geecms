@@ -10,14 +10,6 @@ function hmac_md5($key, $data) {
     return md5($k_opad . pack("H*", md5($k_ipad . $data)));
 }
 
-function permissions($module,$name,$value)
-{
-	if(isset($_SESSION['permissions'][$module][$name]) && in_array($value,$_SESSION['permissions'][$module][$name]))
-		return(true);
-	else
-		return(false);
-}
-
 class module_users
 {
 	public $breadcrumbs;
@@ -65,6 +57,9 @@ class module_users
 					$_SESSION['groups'] = explode(';',$user->groups);
 
 					$tpl->assign('CURRENT_USER.USERNAME',$user->username);
+					
+					$tpl->assign('INFOBAR',true,'if');
+					$tpl->assign('INFOBAR','{L_LOGIN_REAUTHORIZED}');
 				}
 				else
 				{
@@ -328,7 +323,8 @@ class module_users
 	public function group_edit()
 	{
 		global $cfg,$q;
-
+		
+		// the total count of all permissions
 		$count = 0;
 
 		// get the changed permissions
@@ -348,9 +344,11 @@ class module_users
 		$sql = new MySQLObject();
 		$sql->query("SELECT `name`,`module` FROM " . $q->table('permissions') . " WHERE (`group` = " . intval($_GET['gid']) . ")");
 		$to_update = array();
+		$to_update_count = 0;
 		foreach($sql->fetch() as $perm)
 		{
 			$to_update[$perm->module][$perm->name] = true;
+			$to_update_count++;
 		}
 
 		// update/insert the changed permissions
@@ -366,10 +364,11 @@ class module_users
 				else
 				{
 					$query .= " ('" . $name . "'," . intval($_GET['gid']) . ",'" . $module . "','" . $sql->escape($value) . "')";
-					if($i != $count - count($to_update) - 1)
+					if($i != $count - $to_update_count)
 					{
 						$query .= ",";
 					}
+					# !! echo($i . $count . $to_update_count);
 					$i++;
 				}
 			}
@@ -396,7 +395,7 @@ class module_users
 
 		$p = new Pages();
 		$p->url = './acp.php?c=users&amp;section=users&amp;mode=userlist&amp;page=%page';
-		$p->per_page = 50;
+		$p->per_page = 25;
 		$p->query = "SELECT `uid`,`username` FROM " . $q->table('users') . " ORDER BY `uid` ASC";
 
 		$f_users = array();
@@ -416,6 +415,7 @@ class module_users
 		}
 
 		$tpl->assign('USERS_USERLIST',$f_users,'foreach');
+		$tpl->assign('USERS_BROWSER',$p->browser());
 	}
 }
 
@@ -441,12 +441,14 @@ if(defined('IN_ACP') && IN_ACP)
 	}
 
 	global $cfg;
-	$cfg['acp_modules_menu'][] = array(
-		'LINK' => './acp.php?c=users',
-		'HEADER' => '{L_MODULE_USERS}',
-		'ACTIVE' => (isset($_GET['c']) && $_GET['c'] == 'users')
-		? $cfg['tpl']['class_subactive'] : ''
-	);
+	$tpl->queue[0][] = 'global $cfg;
+	$cfg[\'acp_modules_menu\'][] = array(
+		\'LINK\' => \'./acp.php?c=users\',
+		\'HEADER\' => \'{L_MODULE_USERS}\',
+		\'ACTIVE\' => (isset($_GET[\'c\']) && $_GET[\'c\'] == \'users\')
+		? $cfg[\'tpl\'][\'class_subactive\'] : \'\'
+	);';
+	
 	$tpl->assign('MODULE_USERS_IMAGE','./images.php?image=module_users');
 
 	global $tpl;
@@ -471,46 +473,47 @@ if(defined('IN_ACP') && IN_ACP)
 				);
 				
 				//--[ module's menu ]---
-				$cfg['acp_submenu'][] = array(
-					'LINK' => './acp.php?c=users',
-					'HEADER' => '{L_OVERVIEW}',
-					'ACTIVE' => (!isset($_GET['section']))
-					? $cfg['tpl']['class_active'] : ''
+				$tpl->queue[0][] = 'global $cfg;
+				$cfg[\'acp_submenu\'][] = array(
+					\'LINK\' => \'./acp.php?c=users\',
+					\'HEADER\' => \'{L_OVERVIEW}\',
+					\'ACTIVE\' => (!isset($_GET[\'section\']))
+					? $cfg[\'tpl\'][\'class_active\'] : \'\'
 				);
 				
-				$cfg['acp_submenu'][] = array(
-					'LINK' => './acp.php?c=users&amp;section=users&amp;mode=userlist',
-					'HEADER' => '{L_USERS_USERS}',
-					'ACTIVE' => (isset($_GET['section']) && ((isset($_GET['mode']) && ($_GET['section'] == 'user') && ($_GET['mode'] == 'edit')) || ($_GET['section'] == 'users')))
-					? $cfg['tpl']['class_active'] : ''
+				$cfg[\'acp_submenu\'][] = array(
+					\'LINK\' => \'./acp.php?c=users&amp;section=users&amp;mode=userlist\',
+					\'HEADER\' => \'{L_USERS_USERS}\',
+					\'ACTIVE\' => (isset($_GET[\'section\']) && ((isset($_GET[\'mode\']) && ($_GET[\'section\'] == \'user\') && ($_GET[\'mode\'] == \'edit\')) || ($_GET[\'section\'] == \'users\')))
+					? $cfg[\'tpl\'][\'class_active\'] : \'\'
 				);
 				
-				if(isset($_SESSION['permissions']['users']['user']) && in_array('add',$_SESSION['permissions']['users']['user']))
+				if(permissions(\'users\',\'user\',\'add\'))
 				{
-					$cfg['acp_submenu'][] = array(
-						'LINK' => './acp.php?c=users&amp;section=user&amp;mode=add',
-						'HEADER' => '{L_USERS_USER_ADD}',
-						'ACTIVE' => (isset($_GET['section'],$_GET['mode']) && ($_GET['section'] == 'user') && ($_GET['mode'] == 'add'))
-						? $cfg['tpl']['class_active'] : ''
+					$cfg[\'acp_submenu\'][] = array(
+						\'LINK\' => \'./acp.php?c=users&amp;section=user&amp;mode=add\',
+						\'HEADER\' => \'{L_USERS_USER_ADD}\',
+						\'ACTIVE\' => (isset($_GET[\'section\'],$_GET[\'mode\']) && ($_GET[\'section\'] == \'user\') && ($_GET[\'mode\'] == \'add\'))
+						? $cfg[\'tpl\'][\'class_active\'] : \'\'
 					);
 				}
 
-				$cfg['acp_submenu'][] = array(
-					'LINK' => './acp.php?c=users&amp;section=groups',
-					'HEADER' => '{L_USERS_GROUPS}',
-					'ACTIVE' => (isset($_GET['section']) && ((isset($_GET['mode']) && ($_GET['section'] == 'group') && ($_GET['mode'] == 'edit')) || ($_GET['section'] == 'groups')))
-					? $cfg['tpl']['class_active'] : ''
+				$cfg[\'acp_submenu\'][] = array(
+					\'LINK\' => \'./acp.php?c=users&amp;section=groups\',
+					\'HEADER\' => \'{L_USERS_GROUPS}\',
+					\'ACTIVE\' => (isset($_GET[\'section\']) && ((isset($_GET[\'mode\']) && ($_GET[\'section\'] == \'group\') && ($_GET[\'mode\'] == \'edit\')) || ($_GET[\'section\'] == \'groups\')))
+					? $cfg[\'tpl\'][\'class_active\'] : \'\'
 				);
 
-				if(isset($_SESSION['permissions']['users']['group']) && in_array('add',$_SESSION['permissions']['users']['group']))
+				if(permissions(\'users\',\'group\',\'add\'))
 				{
-					$cfg['acp_submenu'][] = array(
-						'LINK' => './acp.php?c=users&amp;section=group&amp;mode=add',
-						'HEADER' => '{L_USERS_GROUP_ADD}',
-						'ACTIVE' => (isset($_GET['section'],$_GET['mode']) && ($_GET['section'] == 'group') && ($_GET['mode'] == 'add'))
-						? $cfg['tpl']['class_active'] : ''
+					$cfg[\'acp_submenu\'][] = array(
+						\'LINK\' => \'./acp.php?c=users&amp;section=group&amp;mode=add\',
+						\'HEADER\' => \'{L_USERS_GROUP_ADD}\',
+						\'ACTIVE\' => (isset($_GET[\'section\'],$_GET[\'mode\']) && ($_GET[\'section\'] == \'group\') && ($_GET[\'mode\'] == \'add\'))
+						? $cfg[\'tpl\'][\'class_active\'] : \'\'
 					);
-				}
+				}';
 				//----
 
 				if(!isset($_GET['section']))
@@ -651,12 +654,12 @@ if(defined('IN_ACP') && IN_ACP)
 	}
 	else
 	{
-		$cfg['installed_modules'][] = array(
-			'MODULE_HEADER' => '{L_MODULE_USERS}',
-			'MODULE_DESCRIPTION' => '{L_MODULE_USERS_DESCRIPTION}',
-			'MODULE_LINK' => './acp.php?c=users',
-			'MODULE_IMAGE' => '{MODULE_USERS_IMAGE}'
-		);
+		$tpl->queue[0][] = '$cfg[\'installed_modules\'][] = array(
+			\'MODULE_HEADER\' => \'{L_MODULE_USERS}\',
+			\'MODULE_DESCRIPTION\' => \'{L_MODULE_USERS_DESCRIPTION}\',
+			\'MODULE_LINK\' => \'./acp.php?c=users\',
+			\'MODULE_IMAGE\' => \'{MODULE_USERS_IMAGE}\'
+		);';
 	}
 	
 	$tpl->assign('BREADCRUMBS',$mod->modules['users']->breadcrumbs,'foreach');

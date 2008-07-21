@@ -2,7 +2,7 @@
 $tpl->assign(array(
 	// MODULE
 	'L_MODULE_USERS' => 'Uživatelé',
-	'L_MODULE_USERS_DESCRIPTION' => '<p>Kompletní správa uživatelských účtů. Možnost přidávat, mazat nebo upravovat uživatele a uživatelské skupiny. Podrobné přidělování oprávnění jednotlivým uživatelům nebo celým uživatelským skupinám.</p>',
+	'L_MODULE_USERS_DESCRIPTION' => '<p>Kompletní správa uživatelských účtů. Možnost přidávat, mazat nebo upravovat uživatele a uživatelské skupiny. Podrobné přidělování oprávnění jednotlivým uživatelským skupinám.</p>',
 
 	// LOGIN
 	'L_LOGIN_WELCOME' => 'Přihlášení do systému GeeCMS',
@@ -52,6 +52,7 @@ $tpl->assign(array(
 
 	// INFOBAR
 	'L_INFOBAR_COOKIES_DISABLED' => 'Cookies jsou vypnuté. Aby nedocházelo k automatickému odhlašování, je potřeba povolit cookies!',
+	'L_LOGIN_REAUTHORIZED' => 'Vaše identita byla automaticky rozpoznána. Byli jste automaticky reauthorizováni. Pro zrušení této funkce zakažte cookies pro tento web.',
 
 	// USERS
 	'L_USERS_USER' => 'Uživatel',

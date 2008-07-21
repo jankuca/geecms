@@ -131,7 +131,7 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 	
 	
 	// admin
-	public function tree_get($parent)
+	public function tree_get($parent,$selectbox = false,$addpage = false)
 	{
 		$items = array();
 		
@@ -139,12 +139,24 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 		$sql = new MySQLObject();
 		if($sql->query("SELECT `pid`,`header` FROM " . $q->table('pages') . " WHERE (`parent` = " . intval($parent) . ") ORDER BY `header` ASC"))
 		{
+			if($parent == -1 && $sql->num() == 0)
+			{
+				global $tpl;
+				$tpl->assign('INFOBAR',true,'if');
+				$tpl->assign('INFOBAR','{L_PAGES_NO_PAGES}');
+			}
+			
 			$i = 0;
 			foreach($sql->fetch() as $item)
 			{
-				$items[$i]['this'] = $item;
-				$items[$i]['childs'] = $this->tree_get($item->pid);
-				$i++;
+				if(!$selectbox || $addpage || $item->pid != intval($_GET['pid']))
+				{
+					$items[$i]['this'] = $item;
+					$items[$i]['childs'] = $this->tree_get($item->pid,$selectbox,
+						($addpage ? true : false)
+					);
+					$i++;
+				}
 			}
 		}
 		
@@ -154,7 +166,7 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 	{
 		$this->treeparts = explode("\n",$tpl);
 	}
-	private function tree_start($root = false,$selectbox = false)
+	private function tree_start($root = false,$selectbox = false,$addpage = false)
 	{
 		global $tpl;
 		
@@ -167,7 +179,7 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 				$this->temptree .= str_replace(
 					'<var(SELECTED)>',
 					(
-						($tpl->assign['PAGE.PARENT'] == -1)
+						($addpage || $tpl->assign['PAGE.PARENT'] == -1)
 						? ' selected="selected"'
 						: ''
 					),
@@ -180,7 +192,7 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 	private function tree_end($root = false,$selectbox = false)
 	{
 		if($root)
-			if(!$selecetbox)
+			if(!$selectbox)
 				$this->temptree .= $this->treeparts[1];
 			else
 				$this->temptree .= $this->treeparts[8];
@@ -193,7 +205,7 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 		$this->temptree = NULL;
 		return($tree);
 	}
-	public function tree_make($tree,$selectbox = false)
+	public function tree_make($tree,$selectbox = false,$addpage = false)
 	{
 		global $tpl;
 		
@@ -204,14 +216,14 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 				if(!$selectbox)
 					$this->tree_start(true);
 				else
-					$this->tree_start(true,true);
+					$this->tree_start(true,true,$addpage);
 			}
 			else
 			{
 				if(!$selectbox)
 					$this->tree_start();
 				else
-					$this->tree_start(false,true);
+					$this->tree_start(false,true,$addpage);
 			}
 			
 			foreach($tree as $item)
@@ -234,7 +246,7 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 				}
 				else
 				{
-					if($item['this']->pid != $tpl->assign['PAGE.ID'])
+					if($addpage || $item['this']->pid != $tpl->assign['PAGE.ID'])
 					{
 						$prefix = NULL;
 						for($i = 0; $i < $this->treeinnerlevel; $i++)
@@ -249,7 +261,7 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 								$prefix . $item['this']->header,
 								$item['this']->pid,
 								(
-									($item['this']->pid == $tpl->assign['PAGE.PARENT'])
+									(!$addpage && $item['this']->pid == $tpl->assign['PAGE.PARENT'])
 									? ' selected="selected"'
 									: ''
 								)
@@ -267,7 +279,9 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 				else
 				{
 					$this->treeinnerlevel++;
-					$this->tree_make($item['childs'],true);
+					$this->tree_make($item['childs'],true,
+						($addpage ? true : false)
+					);
 					$this->treeinnerlevel--;
 				}
 			}
@@ -284,10 +298,37 @@ WHERE (`parent` = " . intval($this->actual['id']) . ")"))
 				if(!$selectbox)
 					$this->tree_end();
 				else
-					$this->tree_end(false,true);
+					if($addpage && $this->treeinnerlevel == 1) $this->tree_end(true,true);
+					else $this->tree_end(false,true);
 			}
 		}
-		//$this->treeinnerlevel--;
+		elseif($selectbox && !$addpage)
+		{
+			if($addpage)
+				$this->tree_end(true,true);
+			elseif($tpl->assign['PAGE.PARENT'] == -1 && $this->treeinnerlevel == 1)
+			{
+				$this->tree_start(true,true);
+				$this->tree_end(true,true);
+			}
+		}
+	}
+	
+	
+	public function addpage()
+	{
+		global $tpl;
+		
+		$fck = new FCKeditor('page[content]');
+		$fck->BasePath = './app/lib/js/fckeditor/';
+		$fck->Value = '<p class="prefix">Prefix</p><p>Content</p>';
+		$fck->Height = 512;
+		ob_start();
+		$fck->Create();
+		$content = ob_get_contents();
+		ob_end_clean();
+		
+		$tpl->assign('PAGE.CONTENT',$content);
 	}
 	
 	public function editpage()
@@ -299,6 +340,7 @@ SELECT
 	" . $q->table('pages') . ".`pid`,
 	" . $q->table('pages') . ".`header`,
 	" . $q->table('pages') . ".`slug`,
+	" . $q->table('pages') . ".`path`,
 	" . $q->table('pages') . ".`content`,
 	" . $q->table('pages') . ".`parent`
 FROM " . $q->table('pages') . "
@@ -320,11 +362,32 @@ WHERE (" . $q->table('pages') . ".`pid` = " . intval($_GET['pid']) . ")
 				'PAGE.ID' => $page->pid,
 				'PAGE.HEADER' => $page->header,
 				'PAGE.SLUG' => $page->slug,
+				'PAGE.PATH' => $page->path,
 				'PAGE.CONTENT' => (isset($content)) ? $content : $page->content,
 				'PAGE.CONTENT_GEEEDIT' => str_replace("\r\n","'+\r'",$page->content),
 				'PAGE.PARENT' => $page->parent
 			));
 		}
+	}
+	
+	public function menu_add_items()
+	{
+		$items = array();
+		
+		$sql = new MySQLObject();
+		if($sql->query("SELECT `pid`,`header` FROM " . $sql->table('pages') . " ORDER BY `slug` ASC"))
+		{
+			global $cfg;
+			foreach($sql->fetch() as $page)
+			{
+				$items[] = array(
+					'ADD_TEXT' => $page->header,
+					'ADD_LINK' => './action.php?c=menu&amp;mode=add&amp;module=pages&amp;pid=' . $page->pid
+				);
+			}
+		}
+		
+		return($items);
 	}
 }
 
@@ -339,6 +402,8 @@ if(defined('IN_SYS') && IN_SYS)
 	if(isset($_GET['c'],$_GET['slug']) && $_GET['c'] == 'pages')
 	{
 		$tpl->inc('pages');
+		
+		$tpl->assign('SITE_TITLE','{PAGE.HEADER} &mdash; {SITE_HEADER}');
 		
 		$mod->modules['pages']->getpage();
 		$mod->modules['pages']->getchildpages();
@@ -380,6 +445,13 @@ if(defined('IN_ACP') && IN_ACP)
 				? $cfg['tpl']['class_active']
 				: ''
 		);
+		$cfg['acp_submenu'][] = array(
+			'LINK' => './acp.php?c=pages&amp;section=page&amp;mode=add',
+			'HEADER' => '{L_PAGES_PAGE_ADD}',
+			'ACTIVE' => ((isset($_GET['section'],$_GET['mode']) && $_GET['section'] == 'page' && $_GET['mode'] == 'add'))
+				? $cfg['tpl']['class_active']
+				: ''
+		);
 		
 		if(!isset($_GET['mode']))
 		{
@@ -401,19 +473,55 @@ if(defined('IN_ACP') && IN_ACP)
 				switch($_GET['section'])
 				{
 					case('page'):
-						if(isset($_GET['pid']))
+						if(isset($_GET['mode']))
 						{
-							$tpl->inc('pages_page_edit',1);
-							$tpl->load('pages_tree',1);
-							
-							$mod->modules['pages']->editpage();
-							
-							$mod->modules['pages']->tree_parts($tpl->get('pages_tree',1));
-							$tree = $mod->modules['pages']->tree_get(-1);
-							$mod->modules['pages']->tree_make($tree,true);
-							
-							$tpl->assign('PAGE_ACTION','./action.php?c=pages&amp;section=page&amp;mode=edit&amp;pid=' . intval($_GET['pid']));
-							$tpl->assign('PAGES_TREE',$mod->modules['pages']->inctree());
+							switch($_GET['mode'])
+							{
+								case('add'):
+									$mod->modules['pages']->breadcrumbs[] = array(
+										'LINK' => './acp.php?c=pages&amp;section=page&amp;mode=add',
+										'HEADER' => '{L_PAGES_PAGE_ADD}'
+									);
+									
+									$tpl->inc('pages_page_add',1);
+									$tpl->load('pages_tree',1);
+									
+									$tpl->assign('SITE_TITLE','{L_MODULE_PAGES} &mdash; {L_PAGES_PAGE_ADD} &ndash; {SITE_HEADER}');
+									$tpl->assign('PAGE_ACTION','./action.php?c=pages&amp;section=page&amp;mode=add');
+									
+									$mod->modules['pages']->addpage();
+									
+									$mod->modules['pages']->tree_parts($tpl->get('pages_tree',1));
+									$tree = $mod->modules['pages']->tree_get(-1,true,true);
+									$mod->modules['pages']->tree_make($tree,true,true);
+									
+									$tpl->assign('PAGES_TREE',$mod->modules['pages']->inctree());
+									break;
+								
+								case('edit'):
+									if(isset($_GET['pid']))
+									{
+										$mod->modules['pages']->breadcrumbs[] = array(
+											'LINK' => './acp.php?c=pages&amp;section=page&amp;mode=edit&amp;pid=' . intval($_GET['pid']),
+											'HEADER' => '{L_PAGES_PAGE_EDIT}: {PAGE.HEADER}'
+										);
+										
+										$tpl->inc('pages_page_edit',1);
+										$tpl->load('pages_tree',1);
+										
+										$tpl->assign('SITE_TITLE','{L_MODULE_PAGES} &mdash; {L_PAGES_PAGE_EDIT}: {PAGE.HEADER} &ndash; {SITE_HEADER}');
+										
+										$mod->modules['pages']->editpage();
+										
+										$mod->modules['pages']->tree_parts($tpl->get('pages_tree',1));
+										$tree = $mod->modules['pages']->tree_get(-1,true);
+										$mod->modules['pages']->tree_make($tree,true);
+										
+										$tpl->assign('PAGE_ACTION','./action.php?c=pages&amp;section=page&amp;mode=edit&amp;pid=' . intval($_GET['pid']));
+										$tpl->assign('PAGES_TREE',$mod->modules['pages']->inctree());
+									}
+									break;
+							}
 						}
 						break;
 				}
@@ -421,6 +529,22 @@ if(defined('IN_ACP') && IN_ACP)
 		}
 		
 		$tpl->assign('BREADCRUMBS',$mod->modules['pages']->breadcrumbs,'foreach');
+	}
+	
+	// -- module_menu(mode=add) --
+	elseif(isset($_GET['c'],$_GET['mode']) && $_GET['c'] == 'menu' && $_GET['mode'] == 'add')
+	{	
+		$t = new subsystem_template();
+		$t->load_module_config('pages');
+		$t->append($cfg['tpl']['pages']['menu_add']);
+		$t->assign('ADD',$mod->modules['pages']->menu_add_items(),'foreach');
+		
+		global $cfg;
+		$cfg['menu_add']['modules'][] = array(
+			'MODULE_NAME' => 'pages',
+			'MODULE_HEADER' => '{L_MODULE_PAGES}',
+			'MODULE_CONTENT' => $t->display(false)
+		);
 	}
 }
 
@@ -444,16 +568,86 @@ if(defined('IN_ACTION') && IN_ACTION)
 					{
 						switch($_GET['mode'])
 						{
-							case('edit'):
-								if(permissions('pages','page','edit'))
+							case('add'):
+								if(permissions('pages','page','add'))
 								{
+									// -- slug --
 									if(intval($_POST['page_slug_generate']) == 1)
 										$slug = generate_slug($_POST['page']['header']);
 									else
 										$slug = $_POST['page']['slug'];
+									
 									$sql = new MySQLObject();
+									
+									$path = $mod->modules['pages']->get_path(intval($_POST['page']['parent']),$sql->escape($slug));
+									
+									// -- add to the pages table --
 									if($sql->query("
-UPDATE " . $q->table('pages') . "
+INSERT INTO " . $sql->table('pages') . "
+(`parent`,`header`,`slug`,`path`,`content`)
+VALUES
+(
+	" . intval($_POST['page']['parent']) . ",
+	'" . $sql->escape($_POST['page']['header']) . "',
+	'" . $sql->escape($slug) . "',
+	'" . $path . "',
+	'" . $sql->escape($_POST['page']['content']) . "'
+)"))
+									{
+										if(isset($_POST['options']['addtomainmenu']) && $order = mainmenu_getorder())
+										{
+											if($sql->query("
+INSERT INTO " . $sql->table('menu') . "
+(`module`,`header`,`link`,`show`,`order`)
+VALUES
+(
+	'pages',
+	'" . $sql->escape($_POST['page']['header']) . "',
+	'" . $path . "',
+	0,
+	" . ($order + 1) . "
+)"))
+											{
+												// -- OK --
+												$tpl->assign('REDIRECT_LOCATION','./acp.php?c=pages');
+												$syslog->alert_success('{L_ALERT_PAGES_PAGE_ADD_SUCCESS}');
+												die();
+											}
+											else
+											{
+												$syslog->alert_error('{L_ALERT_PAGES_PAGE_ADD_ERROR}');
+												die();
+											}
+										}
+										else
+										{
+											// -- OK --
+											$tpl->assign('REDIRECT_LOCATION','./acp.php?c=pages');
+											$syslog->alert_success('{L_ALERT_PAGES_PAGE_ADD_SUCCESS}');
+											die();
+										}
+									}
+								}
+								else
+								{
+									$syslog->permissions_error('{L_PERMISSIONS_PAGES_PAGE_ADD}');
+									die();
+								}
+								break;
+								
+							case('edit'):
+								if(permissions('pages','page','edit'))
+								{
+									// -- slug --
+									if(intval($_POST['page_slug_generate']) == 1)
+										$slug = generate_slug($_POST['page']['header']);
+									else
+										$slug = $_POST['page']['slug'];
+									
+									$sql = new MySQLObject();
+									// -- update the pages table --
+									if($sql->query("
+UPDATE " . $sql->table('pages') . "
 SET
 	`header` = '" . $sql->escape($_POST['page']['header']) . "',
 	`slug` = '" . $sql->escape($slug) . "',
@@ -462,9 +656,22 @@ SET
 	`path` = '" . $mod->modules['pages']->get_path(intval($_POST['page']['parent']),$sql->escape($slug)) . "'
 WHERE (`pid` = " . intval($_GET['pid']) . ")"))
 									{
-										$tpl->assign('REDIRECT_LOCATION','./acp.php?c=pages');
-										$syslog->alert_success('{L_ALERT_PAGES_PAGE_EDIT_SUCCESS}');
-										die();
+										// -- update the menu table --
+										if($sql->query("
+UPDATE " . $sql->table('menu') . "
+SET `link` = '" . $mod->modules['pages']->get_path(intval($_POST['page']['parent']),$sql->escape($slug)) . "'
+WHERE (`link` = '" . $sql->escape($_POST['page']['path_original']) . "' AND `module` = 'pages')"))
+										{
+											// -- OK --
+											$tpl->assign('REDIRECT_LOCATION','./acp.php?c=pages');
+											$syslog->alert_success('{L_ALERT_PAGES_PAGE_EDIT_SUCCESS}');
+											die();
+										}
+										else
+										{
+											$syslog->alert_error('{L_ALERT_PAGES_PAGE_EDIT_ERROR}');
+											die();
+										}
 									}
 									else
 									{
@@ -478,10 +685,99 @@ WHERE (`pid` = " . intval($_GET['pid']) . ")"))
 									die();
 								}
 								break;
+							
+							case('delete'):
+								if(permissions('pages','page','delete'))
+								{
+									if(isset($_GET['pid']))
+									{
+										$sql = new MySQLObject();
+										if($sql->query("SELECT `pid`,`path` FROM " . $sql->table('pages') . " WHERE (`pid` = " . intval($_GET['pid']) . ")"))
+										{
+											$page = $sql->fetch_one();
+											if($sql->query("DELETE FROM " . $sql->table('pages') . " WHERE (`pid` = " . intval($_GET['pid']) . ")"))
+											{
+												if($sql->query("UPDATE " . $sql->table('pages') . " SET `parent` = -1 WHERE (`parent` = " . $page->pid . ")"))
+												{
+													$sql->query("DELETE FROM " . $sql->table('menu') . " WHERE (`link` = '" . $page->path . "')");
+													$tpl->assign('REDIRECT_LOCATION','./acp.php?c=pages');
+													$syslog->alert_success('{L_ALERT_PAGES_PAGE_DELETE_SUCCESS}');
+													die();
+												}
+												else
+												{
+													$syslog->alert_error('{L_ALERT_PAGES_PAGE_DELETE_ERROR}');
+													die();
+												}
+											}
+											else
+											{
+												$syslog->alert_error('{L_ALERT_PAGES_PAGE_DELETE_ERROR}');
+												die();
+											}
+										}
+										else
+										{
+											$syslog->alert_error('{L_ALERT_PAGES_PAGE_DELETE_ERROR}');
+											die();
+										}
+									}
+								}
+								else
+								{
+									$syslog->permissions_error('{L_PERMISSIONS_PAGES_PAGE_DELETE}');
+									die();
+								}
+								break;
 						}
 					}
 					break;
 			}
+		}
+	}
+	
+	elseif(
+		isset($_GET['c'],$_GET['mode'],$_GET['module'],$_GET['pid'])
+		&& $_GET['c'] == 'menu'
+		&& $_GET['mode'] == 'add'
+		&& $_GET['module'] == 'pages'
+	)
+	{
+		$sql = new MySQLObject();
+		$order = mainmenu_getorder();
+		if(
+			$sql->query("SELECT `header`,`path` FROM " . $sql->table('pages') . " WHERE (`pid` = " . intval($_GET['pid']) . ")") 
+			&& $sql->num() > 0
+		)
+		{
+			$page = $sql->fetch_one();
+			if($sql->query("
+INSERT INTO " . $sql->table('menu') . "
+(`header`,`link`,`show`,`order`)
+VALUES
+(
+	'" . $page->header . "',
+	'" . $page->path . "',
+	1,
+	" . ($order + 1) . "
+)"
+			))
+			{
+				// -- OK --
+				$tpl->assign('REDIRECT_LOCATION','./acp.php?c=menu');
+				$syslog->alert_success('{L_ALERT_MENU_ITEM_ADD_SUCCESS}');
+				die();
+			}
+			else
+			{
+				$syslog->alert_error('{L_ALERT_MENU_ITEM_ADD_ERROR}');
+				die();
+			}
+		}
+		else
+		{
+			$syslog->alert_error('{L_ALERT_MENU_ITEM_ADD_ERROR}');
+			die();
 		}
 	}
 }

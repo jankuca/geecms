@@ -474,3 +474,22 @@ body
     float: left;
     background-color: #c4cdd6;
 }
+
+
+
+/* -- styles column -- */
+#xxStylesArea
+{
+	padding: 0 5px;
+	border-left: 1px solid #777;
+	background: #555;
+	color: #EEE;
+}
+#xxStylesArea h4
+{
+	padding: 5px 0 2px;
+	border-bottom: 1px solid #777;
+	color: #CDF;
+	font-size: 13px;
+}
+.SC_Panel { color: #F00 !important; }

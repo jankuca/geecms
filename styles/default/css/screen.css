@@ -2,7 +2,7 @@ body
 {
 	margin: 0; padding: 0;
 	border-top: 10px solid #888;
-	font-family: Arial,sans-serif;
+	font-family: Georgia,serif;
 	font-size: 13px;
 	text-align: center;
 }
@@ -16,7 +16,7 @@ h1
 {
 	width: 800px;
 	margin: 0 auto; padding: 0;
-	color: #FF9;
+	color: #FFF;
 	font-size: 2.5em;
 	font-style: italic;
 	letter-spacing: -0.08em;
@@ -53,6 +53,29 @@ div#footer
 	padding: 3px 5px;
 	border-top: 2px solid #888;
 	background: #EEE;
+	font-family: Arial,sans-serif;
+	font-size: 0.85em;
 }
 
+ul
+{
+	margin: 0;padding: 0 0 0 12px;
+}
 table{text-align:left}
+
+div#content
+{
+	float: left;
+	width: 550px;
+	padding-bottom: 50px;
+}
+div.page-childs
+{
+	float: right;
+	width: 240px;
+}
+
+p.prefix
+{
+	font-style: italic;
+}

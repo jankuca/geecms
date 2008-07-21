@@ -31,7 +31,7 @@ class subsystem_syslog
 	{
 		if(count($this->log) > 0)
 		{
-			echo('<table border="1" width="800" cellspacing="0" style="margin:0 auto;border: 5px solid #EEE;font-family:monospace;font-size:12px;color:#000;background:#FFF;text-align:left;"><thead><tr style="background:#FF9;"><th>Status</th><th>Subsystem</th><th>Function</th><th>Message</th></tr></thead><tbody>');
+			echo('<table border="1" width="800" cellspacing="0" style="margin:0 auto;border: 1px solid #222;border-collapse:collapse;font-family:monospace;font-size:12px;color:#000;background:#FFF;text-align:left;"><thead><tr style="background:#FF9;"><th>Status</th><th>Subsystem</th><th>Function</th><th>Message</th></tr></thead><tbody>');
 			foreach($this->log as $item)
 			{
 				echo((($item[0] == 0)?'<tr style="color:#F00;">':'<tr>').'<td>'.(($item[0] == 0)?'<strong>Error</strong>':'Success').'</td><td>'.$item[1].'</td><td>'.$item[2].'</td><td>'.$item[3].'</td></tr>');

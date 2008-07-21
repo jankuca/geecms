@@ -248,7 +248,6 @@ if ( FCKBrowserInfo.IsGecko && !FCKBrowserInfo.IsOpera )
 		}
 	}
 }
-
 	</script>
 </head>
 <body>
@@ -271,8 +270,21 @@ if ( FCKBrowserInfo.IsGecko && !FCKBrowserInfo.IsOpera )
 			</td>
 		</tr>
 		<tr>
-			<td id="xEditingArea" valign="top" style="height: 100%"></td>
+			<td style="height:100%">
+				<table width="100%" cellpadding="0" cellspacing="0" style="height: 100%; table-layout: fixed">
+					<tr>
+						<td id="xEditingArea" valign="top" style="height: 100%"></td>
+						<!--td id="xxStylesArea" class="SC_Panel" valign="top" style="width: 130px !important; height: 100%; font-family:Arial;font-size:12px;">
+							<h4 id="xxStylesAreaHeading"></h4>
+							<table id="xxStylesSpace"></table>
+						</td-->
+					</tr>
+				</table>
+			</td>
 		</tr>
 	</table>
+<script type="text/javascript"><!--
+//document.getElementById('xxStylesAreaHeading').innerHTML = FCKLang.Style;
+--></script>
 </body>
 </html>

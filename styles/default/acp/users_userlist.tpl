@@ -18,4 +18,5 @@
 				</tr>
 </foreach(USERS_USERLIST)>			</tbody>
 		</table>
+		{USERS_BROWSER}
 	</div>

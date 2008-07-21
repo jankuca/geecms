@@ -8,5 +8,5 @@ require_once('./config.php');
 $tpl->display();
 
 /*$endtime = microtime(); echo((1000 * round($endtime - $starttime,3)) . ' ms');
-$syslog->log();*/
+$syslog->log();/**/
 ?>

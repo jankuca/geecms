@@ -131,6 +131,12 @@ class MySQLObject
 			return(false);
 	}
 	
+	public function table($tablename)
+	{
+		global $q;
+		return('`' . $q->dbname . '`.`' . $q->prefix . $tablename . '`');
+	}
+	
 	public function escape($string)
 	{
 		return(mysql_real_escape_string($string));

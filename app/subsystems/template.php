@@ -2,6 +2,8 @@
 class subsystem_template
 {
 	public $dirpath = './styles/default/';
+	public $configpath = 'config.cfg';
+	
 	private $tpls;
 	private $output = '';
 	
@@ -10,6 +12,16 @@ class subsystem_template
 	private $foreaches = array();
 	
 	public $queue = array(0 => array(),1 => array());
+	
+	public function load_config()
+	{
+		$path = $this->dirpath . $this->configpath;
+		if(file_exists($path))
+		{
+			global $cfg;
+			include($path);
+		}
+	}
 	
 	public function load($filename,$type = 0)
 	{
@@ -31,6 +43,26 @@ class subsystem_template
 			return(true);
 		}
 	}
+	
+	public function load_module_config($module)
+	{
+		global $syslog;
+		
+		$path = $this->dirpath . 'config.' . $module . '.cfg';
+		if(!file_exists($path))
+		{
+			$syslog->error('template','load_module_config',$path);
+			return(false);
+		}
+		else
+		{
+			global $cfg;
+			include($path);
+			$syslog->success('template','load_module_config',$path);
+			return(true);
+		}	
+	}
+	
 	public function inc($filename,$type = 0)
 	{
 		global $syslog;
@@ -54,7 +86,7 @@ class subsystem_template
 			return($this->tpls[$type][$filename]);
 	}
 	
-	public function display()
+	public function display($print = true)
 	{
 		foreach($this->queue[0] as $command) { eval($command); }
 		
@@ -67,13 +99,21 @@ class subsystem_template
 		$this->apply('assign');
 		$this->apply('if');
 		
-		print($this->output);
+		if($print)
+			print($this->output);
+		else
+			return($this->output);
 	}
 
 	public function queue($id)
 	{
 		foreach($this->queue[$id] as $command) { eval($command); }
 		$this->queue[$id] = array();
+	}
+	
+	public function append($string)
+	{
+		$this->output .= $string;
 	}
 	
 	public function assign($data,$value = 'falseNULL',$type = false)
@@ -164,6 +204,36 @@ class subsystem_template
 						$this->output = str_replace($arr[0][$i],'',$this->output);
 				}
 				break;
+		}
+	}
+	
+	public function _module_config($query)
+	{
+		global $tpl,$cfg;
+		
+		$sql = new MySQLObject();
+		if($sql->query($query))
+		{
+			foreach($sql->fetch() as $item)
+			{
+				switch($item->type)
+				{
+					case('string'):
+						$tpl->assign('CONFIG.' . strtoupper($item->name),$item->value);
+						break;
+					case('bool'):
+						$tpl->assign(array(
+							'CONFIG.' . strtoupper($item->name) . '.TRUE.CHECKED'
+							=>	((intval($item->value) == 1)
+								?	$cfg['tpl']['checked'] : ''),
+							
+							'CONFIG.' . strtoupper($item->name) . '.FALSE.CHECKED'
+							=>	((intval($item->value) == 0)
+								?	$cfg['tpl']['checked'] : '')
+						));
+						break;
+				}
+			}
 		}
 	}
 }

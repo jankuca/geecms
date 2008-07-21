@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /geecms/
+
+# if(!file_exists(%{REQUEST_FILENAME}))
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule (.*) redir.php?request=$1 [L,QSA]

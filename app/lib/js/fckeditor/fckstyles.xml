@@ -61,15 +61,6 @@
 	<Style name="Superscript" element="sup" />
 	-->
 
-	<Style name="Marker: Yellow" element="span">
-		<Style name="background-color" value="Yellow" />
-	</Style>
-	<Style name="Marker: Green" element="span">
-		<Style name="background-color" value="Lime" />
-	</Style>
-
-	<Style name="Big" element="big" />
-	<Style name="Small" element="small" />
 	<Style name="Typewriter" element="tt" />
 
 	<Style name="Computer Code" element="code" />
@@ -83,8 +74,8 @@
 	<Style name="Cited Work" element="cite" />
 	<Style name="Inline Quotation" element="q" />
 
-	<Style name="Language: RTL" element="span">
-		<Attribute name="dir" value="rtl" />
+	<Style name="Prefix" element="p">
+		<Attribute name="class" value="prefix" />
 	</Style>
 	<Style name="Language: LTR" element="span">
 		<Attribute name="dir" value="ltr" />
@@ -98,14 +89,7 @@
 
 	<!-- Object Styles -->
 
-	<Style name="Image on Left" element="img">
-		<Attribute name="style" value="padding: 5px; margin-right: 5px" />
-		<Attribute name="border" value="2" />
-		<Attribute name="align" value="left" />
-	</Style>
-	<Style name="Image on Right" element="img">
-		<Attribute name="style" value="padding: 5px; margin-left: 5px" />
-		<Attribute name="border" value="2" />
-		<Attribute name="align" value="right" />
+	<Style name="Illustration" element="img">
+		<Attribute name="class" value="ill" />
 	</Style>
 </Styles>

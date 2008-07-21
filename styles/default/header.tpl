@@ -5,6 +5,7 @@
 	<base href="{SITE_ROOT_PATH}" />
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 	<link rel="stylesheet" type="text/css" media="screen" href="./styles/default/css/screen.css" />
+	<link rel="Shortcut Icon" href="./favicon.ico" />
 	<title>{SITE_TITLE}</title>
 </head>
 <body>
