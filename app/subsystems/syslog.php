@@ -2,11 +2,11 @@
 class subsystem_syslog
 {
 	private $log;
-	
+
 	public function error($subsystem,$function,$message = '',$hide = false)
 	{
 		global $cfg;
-		
+
 		$this->log[] = array(0,$subsystem,$function,$message);
 		if(isset($cfg['etc']['show_errors']) && $cfg['etc']['show_errors'] == 1 && !$hide)
 		{
@@ -18,7 +18,7 @@ class subsystem_syslog
 	public function success($subsystem,$function,$message = '',$hide = true)
 	{
 		global $cfg;
-		
+
 		$this->log[] = array(1,$subsystem,$function,$message);
 		if(isset($cfg['etc']['show_errors']) && $cfg['etc']['show_errors'] == 1 && !$hide)
 		{

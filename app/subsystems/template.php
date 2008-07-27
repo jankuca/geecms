@@ -3,16 +3,16 @@ class subsystem_template
 {
 	public $dirpath = './styles/default/';
 	public $configpath = 'config.cfg';
-	
+
 	private $tpls;
 	private $output = '';
-	
+
 	public $assign = array();
 	private $ifs = array();
 	private $foreaches = array();
-	
+
 	public $queue = array(0 => array(),1 => array());
-	
+
 	public function load_config()
 	{
 		$path = $this->dirpath . $this->configpath;
@@ -22,11 +22,11 @@ class subsystem_template
 			include($path);
 		}
 	}
-	
+
 	public function load($filename,$type = 0)
 	{
 		global $syslog;
-		
+
 		($type == 1) ? $add = 'acp/' : $add = '';
 		$path = $this->dirpath . $add . $filename . '.tpl';
 		if(!file_exists($path))
@@ -43,11 +43,11 @@ class subsystem_template
 			return(true);
 		}
 	}
-	
+
 	public function load_module_config($module)
 	{
 		global $syslog;
-		
+
 		$path = $this->dirpath . 'config.' . $module . '.cfg';
 		if(!file_exists($path))
 		{
@@ -60,13 +60,13 @@ class subsystem_template
 			include($path);
 			$syslog->success('template','load_module_config',$path);
 			return(true);
-		}	
+		}
 	}
-	
+
 	public function inc($filename,$type = 0)
 	{
 		global $syslog;
-		
+
 		if($this->load($filename,$type))
 		{
 			if(!isset($this->tpls[$type][$filename]))
@@ -85,20 +85,20 @@ class subsystem_template
 		if(isset($this->tpls[$type][$filename]))
 			return($this->tpls[$type][$filename]);
 	}
-	
+
 	public function display($print = true)
 	{
 		foreach($this->queue[0] as $command) { eval($command); }
-		
+
 		$this->apply('assign');
-		
+
 		foreach($this->queue[1] as $command) { eval($command); }
-		
+
 		while($this->foreach_count() > 0)
 			$this->apply('foreach');
 		$this->apply('assign');
 		$this->apply('if');
-		
+
 		if($print)
 			print($this->output);
 		else
@@ -110,12 +110,12 @@ class subsystem_template
 		foreach($this->queue[$id] as $command) { eval($command); }
 		$this->queue[$id] = array();
 	}
-	
+
 	public function append($string)
 	{
 		$this->output .= $string;
 	}
-	
+
 	public function assign($data,$value = 'falseNULL',$type = false)
 	{
 		if($type == 'foreach' && is_array($value))
@@ -131,7 +131,7 @@ class subsystem_template
 					$this->assign[$name] = $val;
 		}
 	}
-	
+
 	private function foreach_count()
 	{
 		preg_match_all('#<foreach\((.*?)\)>#is',$this->output,$arr);
@@ -145,7 +145,7 @@ class subsystem_template
 				foreach($this->assign as $name => $value)
 					$this->output = str_replace('{' . $name . '}',$value,$this->output);
 				break;
-			
+
 			case('foreach'):
 				preg_match_all('#<foreach\(([\w\-\_\.]+)\)>(.*?)</foreach\(\\1\)>#is',$this->output,$arr);
 				for($i = 0; $i < count($arr[0]); $i++)
@@ -172,7 +172,7 @@ class subsystem_template
 					$this->output = str_replace($arr[0][$i],$out,$this->output);
 				}
 				break;
-			
+
 			case('if'):
 				// <if()>...<else()>...</if()>
 				preg_match_all('#<if\(([\w\-\_\.]+)\)>(.*?)<else\(\\1\)>(.*?)</if\(\\1\)>#is',$this->output,$arr);
@@ -188,7 +188,7 @@ class subsystem_template
 					else
 						$this->output = str_replace($arr[0][$i],$arr[3][$i],$this->output);
 				}
-				
+
 				// <if()>...</if()>
 				preg_match_all('#<if\(([\w\-\_\.]+)\)>(.*?)</if\(\\1\)>#is',$this->output,$arr);
 				for($i = 0; $i < count($arr[0]); $i++)
@@ -206,11 +206,11 @@ class subsystem_template
 				break;
 		}
 	}
-	
+
 	public function _module_config($query)
 	{
 		global $tpl,$cfg;
-		
+
 		$sql = new MySQLObject();
 		if($sql->query($query))
 		{
@@ -226,7 +226,7 @@ class subsystem_template
 							'CONFIG.' . strtoupper($item->name) . '.TRUE.CHECKED'
 							=>	((intval($item->value) == 1)
 								?	$cfg['tpl']['checked'] : ''),
-							
+
 							'CONFIG.' . strtoupper($item->name) . '.FALSE.CHECKED'
 							=>	((intval($item->value) == 0)
 								?	$cfg['tpl']['checked'] : '')

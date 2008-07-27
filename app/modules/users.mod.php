@@ -13,7 +13,7 @@ function hmac_md5($key, $data) {
 class module_users
 {
 	public $breadcrumbs;
-	
+
 	public function __construct()
 	{
 		global $q,$tpl;
@@ -57,7 +57,7 @@ class module_users
 					$_SESSION['groups'] = explode(';',$user->groups);
 
 					$tpl->assign('CURRENT_USER.USERNAME',$user->username);
-					
+
 					$tpl->assign('INFOBAR',true,'if');
 					$tpl->assign('INFOBAR','{L_LOGIN_REAUTHORIZED}');
 				}
@@ -72,7 +72,7 @@ class module_users
 			}
 		}
 	}
-	
+
 	public function logout()
 	{
 		session_destroy();
@@ -81,7 +81,7 @@ class module_users
 		setcookie('authkey','',time()-60);
 		$_SESSION['groups'] = array(-1);
 	}
-	
+
 	public function authkey()
 	{
 		return(
@@ -100,7 +100,7 @@ class module_users
 		{
 			$sql = new MySQLObject();
 			$query = "SELECT `name`,`value`,`module` FROM " . $q->table('permissions') . " WHERE (";
-			
+
 			for($i = 0; $i < count($_SESSION['groups']); $i++)
 			{
 				$query .= "`group` = " . trim($_SESSION['groups'][$i]);
@@ -141,7 +141,7 @@ class module_users
 		{
 			$char = $possible[rand(0,strlen($possible)-1)];
 			if(!strstr($password,$char))
-			{ 
+			{
 				$password .= $char;
 			}
 		}
@@ -159,7 +159,7 @@ class module_users
 				$tpl->assign('USERS_COUNT','0');
 			else
 				$tpl->assign('USERS_COUNT',$sql->num());
-		
+
 		if($sql->query("SELECT `gid` FROM " . $q->table('users_groups')))
 			if(!$sql->num())
 				$tpl->assign('GROUPS_COUNT','0');
@@ -171,7 +171,7 @@ class module_users
 	public function choose_permissions($edit = false)
 	{
 		global $cfg,$tpl,$q;
-		
+
 		// get the group's permissions
 		if($edit)
 		{
@@ -202,7 +202,7 @@ class module_users
 					'CP_MODULE_HEADER' => '{L_MODULE_' . strtoupper($module) . '}',
 					'CP_MODULE_NAME' => $module
 				);
-				
+
 				$f_rows[$module] = array();
 
 				if(is_array($names))
@@ -222,7 +222,7 @@ class module_users
 								$f_cols[$name][] = array(
 									'CP_VALUE_NAME' => $value,
 									'CP_VALUE_HEADER' => '{L_PERMISSIONS_VALUE.' . $value . '}',
-									'CP_VALUE_CHECKED' => 
+									'CP_VALUE_CHECKED' =>
 										(!$edit)
 										?	''
 										:	(isset($group_perm[$module][$name]) && (preg_match('#^([0-9]+)$#is',$value)) && in_array(intval($value),$group_perm[$module][$name]))
@@ -245,7 +245,7 @@ class module_users
 	public function groups($mode,$edit = false)
 	{
 		global $q,$tpl;
-		
+
 		$f_groups = array();
 
 		$sql = new MySQLObject();
@@ -323,7 +323,7 @@ class module_users
 	public function group_edit()
 	{
 		global $cfg,$q;
-		
+
 		// the total count of all permissions
 		$count = 0;
 
@@ -373,7 +373,7 @@ class module_users
 				}
 			}
 		}
-		
+
 		if($i != 0)
 			$sql->query($query);
 
@@ -448,11 +448,11 @@ if(defined('IN_ACP') && IN_ACP)
 		\'ACTIVE\' => (isset($_GET[\'c\']) && $_GET[\'c\'] == \'users\')
 		? $cfg[\'tpl\'][\'class_subactive\'] : \'\'
 	);';
-	
+
 	$tpl->assign('MODULE_USERS_IMAGE','./images.php?image=module_users');
 
 	global $tpl;
-	
+
 	if(!isset($_COOKIE['authkey']))
 	{
 		$tpl->assign('INFOBAR',true,'if');
@@ -471,7 +471,7 @@ if(defined('IN_ACP') && IN_ACP)
 					'LINK' => './acp.php?c=users',
 					'HEADER' => '{L_MODULE_USERS}'
 				);
-				
+
 				//--[ module's menu ]---
 				$tpl->queue[0][] = 'global $cfg;
 				$cfg[\'acp_submenu\'][] = array(
@@ -480,14 +480,14 @@ if(defined('IN_ACP') && IN_ACP)
 					\'ACTIVE\' => (!isset($_GET[\'section\']))
 					? $cfg[\'tpl\'][\'class_active\'] : \'\'
 				);
-				
+
 				$cfg[\'acp_submenu\'][] = array(
 					\'LINK\' => \'./acp.php?c=users&amp;section=users&amp;mode=userlist\',
 					\'HEADER\' => \'{L_USERS_USERS}\',
 					\'ACTIVE\' => (isset($_GET[\'section\']) && ((isset($_GET[\'mode\']) && ($_GET[\'section\'] == \'user\') && ($_GET[\'mode\'] == \'edit\')) || ($_GET[\'section\'] == \'users\')))
 					? $cfg[\'tpl\'][\'class_active\'] : \'\'
 				);
-				
+
 				if(permissions(\'users\',\'user\',\'add\'))
 				{
 					$cfg[\'acp_submenu\'][] = array(
@@ -538,7 +538,7 @@ if(defined('IN_ACP') && IN_ACP)
 											'LINK' => './acp.php?c=users&amp;section=user&amp;mode=add',
 											'HEADER' => '{L_USERS_USER_ADD}'
 										);
-										
+
 										$tpl->inc('users_user_add',1);
 
 										$tpl->assign('SITE_TITLE','{L_MODULE_USERS} &mdash; {L_USERS_USER_ADD} &ndash; {SITE_HEADER} / {L_ACP}');
@@ -579,11 +579,11 @@ if(defined('IN_ACP') && IN_ACP)
 											'LINK' => './acp.php?c=users&amp;section=users&amp;mode=userlist',
 											'HEADER' => '{L_USERS_USERS}'
 										);
-										
+
 										$tpl->inc('users_userlist',1);
-										
+
 										$tpl->assign('SITE_TITLE','{L_MODULE_USERS} &mdash; {L_USERS_USERS} &ndash; {SITE_HEADER} / {L_ACP}');
-										
+
 										$mod->modules['users']->userlist();
 										break;
 								}
@@ -600,7 +600,7 @@ if(defined('IN_ACP') && IN_ACP)
 											'LINK' => './acp.php?c=users&amp;section=group&amp;mode=add',
 											'HEADER' => '{L_USERS_GROUP_ADD}'
 										);
-										
+
 										$tpl->inc('users_group_add',1);
 
 										$tpl->assign('SITE_TITLE','{L_MODULE_USERS} &mdash; {L_USERS_GROUP_ADD} &ndash; {SITE_HEADER} / {L_ACP}');
@@ -609,7 +609,7 @@ if(defined('IN_ACP') && IN_ACP)
 										$tpl->queue[0][] = 'global $mod;
 										$mod->modules[\'users\']->choose_permissions();';
 										break;
-									
+
 									case('edit'):
 										if(isset($_GET['gid']))
 										{
@@ -617,7 +617,7 @@ if(defined('IN_ACP') && IN_ACP)
 												'LINK' => './acp.php?c=users&amp;section=group&amp;mode=edit&amp;gid=' . intval($_GET['gid']),
 												'HEADER' => '{L_USERS_GROUP_EDIT}: {GROUP.HEADER}'
 											);
-											
+
 											$tpl->inc('users_group_edit',1);
 
 											$tpl->assign('SITE_TITLE','{L_MODULE_USERS} &mdash; {L_USERS_GROUP_EDIT}: {GROUP.HEADER} &ndash; {SITE_HEADER} / {L_ACP}');
@@ -661,7 +661,7 @@ if(defined('IN_ACP') && IN_ACP)
 			\'MODULE_IMAGE\' => \'{MODULE_USERS_IMAGE}\'
 		);';
 	}
-	
+
 	$tpl->assign('BREADCRUMBS',$mod->modules['users']->breadcrumbs,'foreach');
 }
 
@@ -670,7 +670,7 @@ if(defined('IN_LOGINBOX') && IN_LOGINBOX)
 	global $tpl,$q;
 	$tpl->load('loginbox',1);
 	$tpl->inc('loginbox',1);
-	
+
 	$sql = new MySQLObject();
 	$sql->query("DELETE FROM " . $q->table('login_challenges') . " WHERE (`ip` = '" . $_SERVER['REMOTE_ADDR'] . "')");
 	$sql->query("INSERT INTO " . $q->table('login_challenges') . " (`date`,`ip`) VALUES (NOW(),'" . $_SERVER['REMOTE_ADDR'] . "')");
@@ -684,7 +684,7 @@ if(defined('IN_LOGINBOX') && IN_LOGINBOX)
 		$syslog->error('login','challenge','Challenge has not been set! Security error!');
 		die();
 	}
-	
+
 	$tpl->assign('SITE_TITLE','{L_LOGIN_WELCOME} &mdash; {SITE_HEADER}');
 	$tpl->assign('LOGIN_ACTION','./login.php');
 }
@@ -696,8 +696,8 @@ if(defined('IN_LOGIN') && IN_LOGIN)
 		$mod->modules['users']->logout();
 		header('Location: ./acp.php');
 	}
-	
-	
+
+
 	if(!$_SESSION['logged'])
 	{
 		if(isset($_POST['login_username'],$_POST['login_password_md5'],$_POST['login_challenge']))
@@ -1002,7 +1002,7 @@ if(defined('IN_ACTION') && IN_ACTION)
 											die();
 										}
 										break;
-									
+
 									case('delete'):
 										if(permissions('users','group','delete'))
 										{
@@ -1011,9 +1011,17 @@ if(defined('IN_ACTION') && IN_ACTION)
 												$sql = new MySQLObject();
 												if($sql->query("DELETE FROM " . $q->table('users_groups') . " WHERE (`gid` = " . intval($_GET['gid']) . ")"))
 												{
-													$tpl->assign('REDIRECT_LOCATION','./acp.php?c=users&section=groups');
-													$syslog->alert_success('{L_ALERT_USERS_GROUP_DELETE_SUCCESS}');
-													die();
+													if($sql->query("DELETE FROM " . $q->table('permissions') . " WHERE (`group` = " . intval($_GET['gid']) . ")"))
+													{
+														$tpl->assign('REDIRECT_LOCATION','./acp.php?c=users&section=groups');
+														$syslog->alert_success('{L_ALERT_USERS_GROUP_DELETE_SUCCESS}');
+														die();
+													}
+													else
+													{
+														$syslog->alert_error('{L_ALERT_USERS_GROUP_DELETE_ERROR}');
+														die();
+													}
 												}
 												else
 												{

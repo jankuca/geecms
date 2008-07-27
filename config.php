@@ -13,7 +13,7 @@ include_once('./app/subsystems/lang.php');
 include_once('./app/subsystems/modules.php');
 
 // mysql: connection
-$q->connect('localhost','root','','blackpig');
+$q->connect('localhost','blackpig','vGVbTen9y*:Ue7PW','blackpig');
 $q->prefix = 'geecms_';
 
 // mysql: select the configuration
@@ -21,15 +21,15 @@ $cfg = array();
 $cfg['etc'] = array();
 $cfg['tpl'] = array();
 if(defined('IN_IMAGES') && IN_IMAGES)
-	$cfg['tpl']['images'] = array();
+  $cfg['tpl']['images'] = array();
 
 $sql = new MySQLObject();
 $sql->query("SELECT `name`,`value`,`assign` FROM " . $q->table('config') . "");
 foreach($sql->fetch() as $item)
 {
-	$cfg['etc'][$item->name] = $item->value;
-	if(intval($item->assign) == true)
-		$tpl->assign($item->name,$item->value);
+  $cfg['etc'][$item->name] = $item->value;
+  if(intval($item->assign) == true)
+    $tpl->assign($item->name,$item->value);
 }
 unset($sql);
 

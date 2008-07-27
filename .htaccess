@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /geecms/
+RewriteBase /
 
 # if(!file_exists(%{REQUEST_FILENAME}))
 RewriteCond %{REQUEST_FILENAME} !-d

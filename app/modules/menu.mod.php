@@ -2,11 +2,11 @@
 class module_menu
 {
 	public $items = array();
-	
+
 	public function __construct($acp = false)
 	{
 		global $q,$cfg,$tpl;
-		
+
 		if(!$acp)
 		{
 			$sql = new MySQLObject();
@@ -48,7 +48,7 @@ class module_menu
 			{
 				$tpl->assign(\'ACP_MODULES_MENU\',false,\'if\');
 			}
-			
+
 			if(count($cfg[\'acp_submenu\']) > 0)
 			{
 				$tpl->assign(\'ACP_SUBMENU\',true,\'if\');
@@ -60,11 +60,11 @@ class module_menu
 			}';
 		}
 	}
-	
+
 	public function mainmenu_items()
 	{
 		global $tpl,$cfg;
-		
+
 		$sql = new MySQLObject();
 		if($sql->query("
 SELECT `iid`,`header`,`link`,`show`
@@ -72,13 +72,13 @@ FROM " . $sql->table('menu') . "
 ORDER BY `order` ASC"))
 		{
 			$num = $sql->num();
-			
+
 			if($num == 0)
 			{
 				$tpl->assign('INFOBAR',true,'if');
 				$tpl->assign('INFOBAR','{L_MENU_MAINMENU_NO_ITEMS}');
 			}
-			
+
 			$f_items = array();
 			$i = 0;
 			foreach($sql->fetch() as $item)
@@ -89,17 +89,17 @@ ORDER BY `order` ASC"))
 					'ITEM_ID' => $item->iid,
 					'ITEM_LINK_EDIT' => './acp.php?c=menu&amp;mode=edit&amp;iid=' . $item->iid,
 					'ITEM_LINK_DELETE' => './action.php?c=menu&amp;mode=delete&amp;iid=' . $item->iid,
-					
+
 					'ITEM_LINK_SHOW_HIDE' => './action.php?c=menu&amp;mode=' . (($item->show == 0) ? 'show' : 'hide') . '&amp;iid=' . $item->iid,
 					'ITEM_TEXT_SHOW_HIDE' => (($item->show == 0) ? '{L_SHOW}' : '{L_HIDE}'),
-					
+
 					'ITEM_LINK_MOVEUP' => ($i == 0) ? '' : str_replace('<var(LINK)>','./action.php?c=menu&amp;mode=move&amp;dir=up&amp;iid=' . $item->iid,$cfg['tpl']['link']['moveup']),
 					'ITEM_LINK_MOVEDOWN' => ($i == $num - 1) ? '' : str_replace('<var(LINK)>','./action.php?c=menu&amp;mode=move&amp;dir=down&amp;iid=' . $item->iid,$cfg['tpl']['link']['movedown']),
 				);
-				
+
 				$i++;
 			}
-			
+
 			if(count($f_items) > 0)
 			{
 				$tpl->assign('MENU_MAINMENU',true,'if');
@@ -109,7 +109,7 @@ ORDER BY `order` ASC"))
 				$tpl->assign('MENU_MAINMENU',false,'if');
 		}
 	}
-	
+
 	public function edit_item()
 	{
 		$sql = new MySQLObject();
@@ -122,7 +122,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")"
 			&& $sql->num() > 0)
 		{
 			$item = $sql->fetch_one();
-			
+
 			global $tpl,$cfg;
 			$tpl->assign(array(
 				'ITEM.HEADER' => $item->header,
@@ -132,7 +132,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")"
 			));
 		}
 	}
-	
+
 	public function add_item()
 	{
 		global $tpl;
@@ -152,18 +152,18 @@ if(defined('IN_SYS') && IN_SYS)
 if(defined('IN_ACP') && IN_ACP)
 {
 	$mod->modules['menu'] = new module_menu(true);
-	
+
 	$cfg['acp_menu'] = array();
 	$cfg['acp_modules_menu'] = array();
 	$cfg['acp_submenu'] = array();
-	
+
 	$cfg['acp_menu'][] = array(
 		'LINK' => './acp.php',
 		'HEADER' => '{L_ACP_INDEX}',
 		'ACTIVE' => (!isset($_GET['c']))
 		? $cfg['tpl']['class_active'] : ''
 	);
-	
+
 	if(!isset($_GET['c']))
 	{
 		global $cfg;
@@ -182,14 +182,14 @@ if(defined('IN_ACP') && IN_ACP)
 		'ACTIVE' => (isset($_GET['c']) && $_GET['c'] == 'menu')
 		? $cfg['tpl']['class_subactive'] : ''
 	);
-	
+
 	if(isset($_GET['c']) && $_GET['c'] == 'menu')
 	{
 		$mod->modules['menu']->breadcrumbs[] = array(
 			'LINK' => './acp.php?c=menu',
 			'HEADER' => '{L_MODULE_MENU}'
 		);
-		
+
 		$cfg['acp_submenu'][] = array(
 			'LINK' => './acp.php?c=menu',
 			'HEADER' => '{L_MENU_MAINMENU}',
@@ -215,10 +215,10 @@ if(defined('IN_ACP') && IN_ACP)
 			);
 		}
 	}
-	
+
 	$tpl->queue[1][] = 'global $mod;
 	$mod->modules[\'menu\'] = new module_menu(true);';
-	
+
 	if(isset($_GET['c']))
 	{
 		switch($_GET['c'])
@@ -230,11 +230,11 @@ if(defined('IN_ACP') && IN_ACP)
 						'LINK' => './acp.php?c=menu',
 						'HEADER' => '{L_MENU_MAINMENU}'
 					);
-					
+
 					$tpl->inc('menu',1);
-					
+
 					$tpl->assign('SITE_TITLE','{L_MODULE_MENU} &ndash; {SITE_HEADER}');
-					
+
 					$mod->modules['menu']->mainmenu_items();
 				}
 				else
@@ -246,42 +246,42 @@ if(defined('IN_ACP') && IN_ACP)
 								'LINK' => './acp.php?c=menu&mode=add',
 								'HEADER' => '{L_MENU_ITEM_ADD}'
 							);
-							
+
 							$tpl->inc('menu_item_add',1);
 							$mod->modules['menu']->add_item();
-							
+
 							$tpl->assign('SITE_TITLE','{L_MODULE_MENU} &mdash; {L_MENU_ITEM_ADD} &ndash; {SITE_HEADER}');
-							
+
 							break;
-						
+
 						case('add-individual'):
 							$mod->modules['menu']->breadcrumbs[] = array(
 								'LINK' => './acp.php?c=menu&mode=add-individual',
 								'HEADER' => '{L_MENU_ITEM_ADD_INDIVIDUAL}'
 							);
-							
+
 							$tpl->inc('menu_item_add_individual',1);
-							
+
 							$tpl->assign('SITE_TITLE','{L_MODULE_MENU} &mdash; {L_MENU_ITEM_ADD_INDIVIDUAL} &ndash; {SITE_HEADER}');
 							$tpl->assign('ITEM_ACTION','./action.php?c=menu&amp;mode=add-individual');
 							break;
-						
+
 						case('edit'):
 							$mod->modules['menu']->breadcrumbs[] = array(
 								'LINK' => './acp.php?c=menu&mode=edit&amp;iid=' . intval($_GET['iid']),
 								'HEADER' => '{L_MENU_ITEM_EDIT}: {ITEM.HEADER}'
 							);
-							
+
 							$tpl->inc('menu_item_edit',1);
-					
+
 							$tpl->assign('SITE_TITLE','{L_MODULE_MENU} &ndash; {SITE_HEADER}');
 							$tpl->assign('ITEM_ACTION','./action.php?c=menu&amp;mode=edit&amp;iid=' . intval($_GET['iid']));
-					
+
 							$mod->modules['menu']->edit_item();
 							break;
 					}
 				}
-				
+
 				$tpl->assign('BREADCRUMBS',$mod->modules['menu']->breadcrumbs,'foreach');
 				break;
 		}
@@ -308,7 +308,7 @@ if(defined('IN_ACTION') && IN_ACTION)
 							if(permissions('menu','items','add'))
 							{
 								$sql = new MySQLObject();
-								
+
 								$order = mainmenu_getorder();
 								if($sql->query("
 INSERT INTO " . $sql->table('menu') . "
@@ -340,7 +340,7 @@ VALUES
 								die();
 							}
 							break;
-						
+
 						case('edit'):
 							if(permissions('menu','items','edit'))
 							{
@@ -371,7 +371,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")"
 								die();
 							}
 							break;
-						
+
 						case('delete'):
 							if(permissions('menu','items','delete'))
 							{
@@ -380,7 +380,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")"
 								{
 									$item = $sql->fetch_one();
 									$order = $item->order;
-									
+
 									if(mainmenu_reorder($order))
 									{
 										if($sql->query("DELETE FROM " . $sql->table('menu') . " WHERE (`iid` = " . intval($_GET['iid']) . ")"))
@@ -414,7 +414,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")"
 								die();
 							}
 							break;
-						
+
 						case('show'):
 							if(permissions('menu','items','edit'))
 							{
@@ -438,7 +438,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")"
 								die();
 							}
 							break;
-						
+
 						case('hide'):
 							if(permissions('menu','items','edit'))
 							{
@@ -462,7 +462,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")"
 								die();
 							}
 							break;
-						
+
 						case('move'):
 							if(permissions('menu','items','edit') && isset($_GET['dir']))
 							{
@@ -515,7 +515,7 @@ WHERE (`iid` = " . intval($_GET['iid']) . ")")
 							}
 							break;
 					}
-				} 
+				}
 				break;
 		}
 	}

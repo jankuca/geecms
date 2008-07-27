@@ -5,11 +5,11 @@ class subsystem_modules
 		'./app/modules/',
 		'./modules/'
 	);
-	
+
 	public function load()
 	{
 		global $syslog;
-		
+
 		$loaded = array();
 		$path = $this->dirpath[0] . 'order.cfg';
 		if(file_exists($path))
@@ -29,7 +29,7 @@ class subsystem_modules
 				}
 			}
 		}
-		
+
 		$dir = dir($this->dirpath[0]);
 		while($file = $dir->read())
 		{
@@ -46,7 +46,7 @@ class subsystem_modules
 				}
 			}
 		}
-		
+
 		$dir = dir($this->dirpath[1]);
 		while($file = $dir->read())
 		{
