@@ -28,7 +28,7 @@ class module_menu
 		else
 		{
 			global $tpl;
-			$tpl->queue[0][] = 'global $tpl;
+			$tpl->queue[1][] = 'global $tpl;
 			if(count($cfg[\'acp_menu\']) > 0)
 			{
 				$tpl->assign(\'ACP_MENU\',true,\'if\');
@@ -290,7 +290,7 @@ if(defined('IN_ACP') && IN_ACP)
 
 if(defined('IN_IMAGES') && IN_IMAGES)
 {
-	$cfg['tpl']['images']['module_menu'] = 'acp/images/module_menu.png';
+	$cfg['tpl']['images']['module_menu'] = '../../styles/default/acp/images/module_menu.png';
 }
 
 if(defined('IN_ACTION') && IN_ACTION)

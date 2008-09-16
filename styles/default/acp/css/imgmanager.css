@@ -1,0 +1,167 @@
+body
+{
+	margin: 0; padding: 0;
+	width: 100%;
+	height: 100%;
+	background: #FFF url('../images/imgmanager_body.png') repeat-x 0 25px;
+	font-family: Arial;
+	font-size: 11px;
+	overflow: hidden;
+	position: fixed;
+	top: 0; left: 0;
+}
+ul,li { margin: 0; padding: 0; }
+ul { list-style: none; }
+li { padding-left: 20px; }
+.folder strong { display: block;  }
+#root { height: 300px; background: #FFF; overflow: auto; border: 1px solid #E5E5E5; border-top: 2px solid #CCC; }
+.item { border-bottom: 1px solid #DDD; }
+.item
+{
+	position: relative;
+	background: #EEE url('../images/imgmanager_folder_bg.png') repeat-x;
+}
+.image-jpg strong, .image-jpeg strong, .image-gif strong, .image-png strong, .image-other strong { display: inline; }
+.image-jpg, .image-jpeg, .image-gif, .image-png, .image-other
+{
+	position: relative;
+	height: 18px;
+	padding: 0 8px 0 20px;
+	background: #FFF;
+	line-height: 18px;
+}
+.image-jpg, .image-jpeg { background: #FFF url('../images/icon-image-jpg.ico') no-repeat 0 0; }
+.image-gif { background: #FFF url('../images/icon-image-gif.ico') no-repeat 0 0; }
+.image-png { background: #FFF url('../images/icon-image-png.ico') no-repeat 0 0; }
+.image-other { background: #FFF url('../images/icon-image-other.ico') no-repeat 0 0; }
+
+.image-jpg:hover, .image-jpeg:hover, .image-gif:hover, .image-png:hover, .image-other:hover, .item:hover
+{
+	background-color: #EFC;
+}
+
+
+span.expand, span.pack
+{
+	position: absolute;
+	top: 0; left: -20px;
+	display: block;
+	width: 20px;
+	height: 40px;
+	background: url('http://www.gemini.edu/sciops/OThelp/expand.gif') no-repeat 0 2px;
+}
+
+.item { padding: 3px 8px; }
+
+.buttons
+{
+	position: absolute;
+	top: 0;
+	right: 5px;
+}
+
+.selectedDir, #selectedDir { background: #FFA url('../images/imgmanager_selected.png') !important; }
+
+.new { color: #669900; }
+
+#dialog
+{
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 386px;
+	background: #FFF url('../images/imgmanager_dialog.png') repeat-x;
+	z-index: 3;
+}
+#dialog #dialogSpace
+{
+	margin: 5px;
+	padding: 8px 15px 5px;
+	background: #FFF;
+	border: 1px solid #E5E5E5;
+	border-top-width: 2px;
+}
+#dialog h2
+{
+	margin: 0 0 10px; padding: 0;
+	border-bottom: 1px solid #069;
+	font-size: 13px;
+}
+#dialog label
+{
+	float: left;
+	width: 100px;
+	padding-top: 2px;
+	padding-right: 5px;
+	text-align: right;
+	font-size: 13px;
+}
+#dialog input { margin-bottom: 3px; }
+#dialog input[type=file] { width: 235px; }
+#dialog input[type=text] { width: 229px; }
+#dialog input[readonly=readonly] { color: #888; font-size: 11px; }
+#dialog input[type=submit]
+{
+	margin-left: 105px;
+}
+
+#dialogStatus
+{
+	display: none;
+	text-align: center;
+}
+#dialogStatus img { vertical-align: middle; }
+
+span.warning
+{
+	display: block;
+	height: 16px;
+	margin-top: 10px;
+	margin-left: 10px;
+	padding-top: 1px;
+	padding-left: 24px;
+	background: url('../images/warning.ico') no-repeat 0 0;
+	line-height: 16px;
+}
+
+#target_frame { display: none; }
+
+/* -- toolbar -- */
+div#toolbar
+{
+	height: 20px;
+	padding: 3px 5px 2px;
+	background: #D9D9D9 url('../images/imgmanager_toolbar.png') repeat-x;
+}
+div#toolbar a
+{
+	float: right;
+	margin-left: 3px;
+	padding: 2px 5px 2px 24px;
+	border: 1px solid #AAA;
+}
+div#toolbar a#uploadFile { background: #EEE url('../images/upload.ico') no-repeat 3px 1px; }
+div#toolbar a#createDir { background: #EEE url('../images/dir.ico') no-repeat 3px 1px; }
+
+div#toolbar a:hover, a#dialogClose:hover { background-color: #FFF !important; }
+
+a#dialogClose
+{
+	display: block;
+	margin-left: 3px;
+	width: 22px;
+	height: 22px;
+	overflow:hidden;
+	position: absolute;
+	top: 0; right: -22px;
+	background: #EEE url('../images/close.ico') no-repeat 3px 3px;
+	cursor: pointer;
+}
+
+#root { margin: 0 5px; }
+
+.buttons a { display: block; float: left; padding-left: 1px; }
+.item .buttons { padding-top: 8px; }
+
+p { font-size: 12px; }

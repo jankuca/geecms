@@ -1011,17 +1011,9 @@ if(defined('IN_ACTION') && IN_ACTION)
 												$sql = new MySQLObject();
 												if($sql->query("DELETE FROM " . $q->table('users_groups') . " WHERE (`gid` = " . intval($_GET['gid']) . ")"))
 												{
-													if($sql->query("DELETE FROM " . $q->table('permissions') . " WHERE (`group` = " . intval($_GET['gid']) . ")"))
-													{
-														$tpl->assign('REDIRECT_LOCATION','./acp.php?c=users&section=groups');
-														$syslog->alert_success('{L_ALERT_USERS_GROUP_DELETE_SUCCESS}');
-														die();
-													}
-													else
-													{
-														$syslog->alert_error('{L_ALERT_USERS_GROUP_DELETE_ERROR}');
-														die();
-													}
+													$tpl->assign('REDIRECT_LOCATION','./acp.php?c=users&section=groups');
+													$syslog->alert_success('{L_ALERT_USERS_GROUP_DELETE_SUCCESS}');
+													die();
 												}
 												else
 												{

@@ -11,6 +11,7 @@ body
 
 a { color: #069; }
 a:hover { color: #222; }
+a img { border: 0; }
 
 h1
 {
@@ -162,6 +163,7 @@ div#column
 	div#column ul { margin: 5px 0 20px; padding: 0;}
 	div#column li
 	{
+		position: relative;
 		margin: 0;
 		padding: 0;
 		list-style: none;
@@ -214,9 +216,12 @@ table.config { float: right; width: 475px; }
 .col3 { width: 350px; }
 .action { width: 70px; }
 .actionhalf { width: 40px; }
+.icon { width: 16px; text-align: center; }
+td { border-bottom: 1px solid #EEE; height: 24px; line-height: 24px; }
 td.error, tr:hover td.error, tr.error td, tr.error:hover td, option.error { border: 1px solid #FAA; background: #FDD; color: #F00; padding: 5px 10px; }
 table h4 { margin: 0; }
-td { padding: 2px 1px 1px; }
+td { padding: 0 2px; }
+td img { vertical-align: middle; position: relative; top: -2px; }
 th
 {
 	padding: 5px 2px 2px;
@@ -322,3 +327,61 @@ iframe#geeedit
 textarea#geeedit_code { width: 100%; height: 350px; margin-bottom: 0; }
 div.geeedit_tools { height: 24px; background-color: #EEE; }
 div.geeedit_modes { height: 20px; background-color: #EEE; }
+
+a#dialogClose
+{
+	display: block;
+	margin-left: 3px;
+	width: 22px;
+	height: 22px;
+	overflow:hidden;
+	position: absolute;
+	top: 0; right: -22px;
+	background: #EEE url('../images/close.ico') no-repeat 3px 3px;
+	cursor: pointer;
+}
+
+div#updaterStatus
+{
+	background: #EEF;
+	text-align: center;
+	line-height: 1.8em;
+}
+	div#updaterStatus img
+	{
+		position: relative;
+		top: 3px;
+	}
+	div#updaterStatus img.throbber
+	{
+		top: 5px !important;
+	}
+ul#updaterUpdates
+{
+	margin: 0;
+	padding: 0;
+	line-height: 1.5em;
+	list-style: none;
+}
+	ul#updaterUpdates li
+	{
+		position: relative;
+		display: block;
+		margin: 0;
+		padding: 5px;
+		border-bottom: 1px solid #DDD;
+	}
+	ul#updaterUpdates li span.star
+	{
+		position: absolute;
+		top: 5px; left: 5px;
+	}
+	ul#updaterUpdates li span.star img
+	{
+		position: relative;
+		top: 1px;
+	}
+	ul#updaterUpdates li span.button-install-update { position: absolute; top: 17px; right: 10px; }
+	ul#updaterUpdates li strong { padding-left: 20px; }
+	ul#updaterUpdates li small { padding-left: 16px; }
+	ul#updaterUpdates li span.button-install-update a { cursor: pointer; }
